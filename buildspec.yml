@@ -2,6 +2,13 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo "Docker file lint stage"
+      - echo "Docker file lint stage will fail if docker file is not secure or linted"
+      - echo Using Hadolint for Dockerfile linting
+      - docker pull hadolint/hadolint:v1.16.2
+      - docker run --rm -i -v ${PWD}/.hadolint.yml:/.hadolint.yaml hadolint/hadolint:v1.16.2
+      - hadolint -f json - < ./Dockerfile
+      - echo DOCKER FILE LINT STATGE - PASSED
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
