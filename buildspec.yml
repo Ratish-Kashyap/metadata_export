@@ -20,10 +20,16 @@ phases:
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
   post_build:
     commands:
+      - bash -c "if [ /"$CODEBUILD_BUILD_SUCCEEDING/" == /"0/" ]; then exit 1; fi"
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo "Deep Vulnerability Scan ANCHORE"
+      - echo "POST_BUILD Phase Will fail if Container fails with Vulnerabilities"
+      - export COMPOSE_INTERACTIVE_NO_CLI=1
+      - curl -s https://ci-tools.anchore.io/inline_scan-v0.3.3 | bash -s -- $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - echo Writing image definitions file...
       - printf '[{"name":"asset_metadata","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
