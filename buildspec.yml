@@ -7,8 +7,7 @@ phases:
       - echo Using Hadolint for Dockerfile linting
       - docker pull hadolint/hadolint:v1.16.2
       - echo ${PWD}
-      - docker run --rm -i -v ${PWD}/.hadolint.yml:/.hadolint.yaml hadolint/hadolint:v1.16.2
-      - hadolint -f json - < ./Dockerfile
+      - docker run --rm -i -v ${PWD}/.hadolint.yml:/.hadolint.yaml hadolint/hadolint:v1.16.2 hadolint -f json - < ./Dockerfile
       - echo DOCKER FILE LINT STATGE - PASSED
       - echo Logging in to Amazon ECR...
       - aws --version
