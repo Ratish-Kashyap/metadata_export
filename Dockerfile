@@ -6,7 +6,7 @@ RUN mkdir -p ${APP_DIR}
 
 WORKDIR ${APP_DIR}
 
-ADD ./requirements.txt ${APP_DIR}
+COPY ./requirements.txt ${APP_DIR}
 RUN pip install -r requirements.txt
 
 COPY ./model ${APP_DIR}/model
